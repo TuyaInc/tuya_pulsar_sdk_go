@@ -3,6 +3,8 @@ github.com/TuyaInc/pulsar-client-go v0.0.0-20190903133836-0cf6f0437d25 h1:Rc/Ml4
 github.com/TuyaInc/pulsar-client-go v0.0.0-20190903133836-0cf6f0437d25/go.mod h1:lT6Je47CPCCrpLSzzs9ahF5Jow/6XpFSpQGrGAIsI94=
 github.com/TuyaInc/pulsar-client-go v0.0.0-20190904023413-27ea5c4e027e h1:g20q2xcKHrNEpYhbCwMH2ZcRgCPNGm1jg+NsKXbpz4A=
 github.com/TuyaInc/pulsar-client-go v0.0.0-20190904023413-27ea5c4e027e/go.mod h1:Mn7a5ZF+OIvo3duPSyqIpUECMwsB9czQVlCecaIIWmk=
+github.com/TuyaInc/pulsar-client-go v0.0.0-20190906034536-f3e7844fe306 h1:FmrvDH4fObCISkzuUPK4iJqj+BmxNjpI8K14I+3AahE=
+github.com/TuyaInc/pulsar-client-go v0.0.0-20190906034536-f3e7844fe306/go.mod h1:Mn7a5ZF+OIvo3duPSyqIpUECMwsB9czQVlCecaIIWmk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/golang/protobuf v1.3.0 h1:kbxbvI4Un1LUWKxufD+BiE6AEExYYgkQLQmLFqA1LFk=
