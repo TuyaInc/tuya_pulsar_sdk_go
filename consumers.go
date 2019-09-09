@@ -3,9 +3,6 @@ package pulsar
 import (
 	"context"
 	"sync"
-	"time"
-
-	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tylog"
 )
 
 type ConsumerList struct {
@@ -24,28 +21,5 @@ func (l *ConsumerList) ReceiveAndHandle(ctx context.Context, handler PayloadHand
 			wg.Done()
 		}()
 	}
-	go l.CronFlow()
 	wg.Wait()
-}
-
-func (l *ConsumerList) CronFlow() {
-	if l.FlowPeriodSecond == 0 {
-		return
-	}
-	if l.FlowPermit == 0 {
-		return
-	}
-	tk := time.NewTicker(time.Duration(l.FlowPeriodSecond) * time.Second)
-	for range tk.C {
-		for i := 0; i < len(l.list); i++ {
-			c := l.list[i].csm.Consumer(context.Background())
-			if c != nil {
-				tylog.Debug("cron flow", tylog.String("topic", c.Topic))
-				err := c.Flow(l.FlowPermit)
-				if err != nil {
-					tylog.Error("flow failed", tylog.ErrorField(err), tylog.String("topic", c.Topic))
-				}
-			}
-		}
-	}
 }
