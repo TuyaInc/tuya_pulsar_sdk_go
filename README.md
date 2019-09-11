@@ -56,6 +56,13 @@ func (h *helloHandler) HandlePayload(ctx context.Context, msg *pulsar.Message, p
 
 ```
 
+## 注意事项
+
+1. 确保accessID，accessKey是正确的
+2. 确保pulsar地址是正确的，应该使用pulsar://mqe.tuyaus.com:7285模式而不是
+pulsar+ssl://mqe.tuyaus.com:7285
+3. 尽量确保你使用的sdk代码版本是最新的
+
 ## About debug
 
 通过下面的代码，你可以在终端看到所有和pulsar服务的通信
