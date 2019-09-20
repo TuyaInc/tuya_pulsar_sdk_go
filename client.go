@@ -14,10 +14,8 @@ import (
 )
 
 const (
-	DefaultSubscribeName = "develop"
-
-	DefaultFlowPeriodSecond = 10
-	DefaultFlowPermit       = 64
+	DefaultFlowPeriodSecond = 30
+	DefaultFlowPermit       = 10
 )
 
 type Message = msg.Message
