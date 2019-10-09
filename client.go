@@ -16,6 +16,10 @@ import (
 const (
 	DefaultFlowPeriodSecond = 30
 	DefaultFlowPermit       = 10
+
+	PulsarAddrCN = "pulsar://mqe.tuyacn.com:7285"
+	PulsarAddrEU = "pulsar://mqe.tuyaeu.com:7285"
+	PulsarAddrUS = "pulsar://mqe.tuyaus.com:7285"
 )
 
 type Message = msg.Message
@@ -116,4 +120,9 @@ func (c *client) GetPartition(topic string, config manage.ClientConfig) int {
 		return 0
 	}
 	return int(p.GetPartitions())
+}
+
+func TopicForAccessID(accessID string) string {
+	topic := fmt.Sprintf("persistent://%s/out/event", accessID)
+	return topic
 }
