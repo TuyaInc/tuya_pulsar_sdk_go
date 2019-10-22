@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tylog"
 
@@ -63,7 +64,17 @@ func getTenant(topic string) string {
 }
 
 func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
+	tylog.Info("start creating consumer",
+		tylog.String("pulsar", c.Addr),
+		tylog.String("topic", config.Topic),
+	)
+
 	errs := make(chan error, 10)
+	go func() {
+		for err := range errs {
+			tylog.Error("async errors", tylog.ErrorField(err))
+		}
+	}()
 	cfg := manage.ConsumerConfig{
 		ClientConfig: manage.ClientConfig{
 			Addr:       c.Addr,
@@ -74,10 +85,10 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 			},
 			Errs: errs,
 		},
-
-		Topic:   config.Topic,
-		SubMode: manage.SubscriptionModeFailover,
-		Name:    subscriptionName(config.Topic),
+		Topic:              config.Topic,
+		SubMode:            manage.SubscriptionModeFailover,
+		Name:               subscriptionName(config.Topic),
+		NewConsumerTimeout: time.Minute,
 	}
 	p := c.GetPartition(config.Topic, cfg.ClientConfig)
 	wg := &sync.WaitGroup{}
@@ -89,11 +100,6 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 			cfg.Topic = fmt.Sprintf("%s-partition-%d", originTopic, i)
 			mc := manage.NewManagedConsumer(c.pool, cfg)
 			list = append(list, &consumerImpl{csm: mc, wg: wg})
-			go func() {
-				for err := range errs {
-					tylog.Error("async errors", tylog.ErrorField(err))
-				}
-			}()
 		}
 		consumerList := &ConsumerList{
 			list:             list,
@@ -105,11 +111,10 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 
 	// single topic
 	mc := manage.NewManagedConsumer(c.pool, cfg)
-	go func() {
-		for err := range errs {
-			tylog.Error("async errors", tylog.ErrorField(err))
-		}
-	}()
+	tylog.Info("create consumer success",
+		tylog.String("pulsar", c.Addr),
+		tylog.String("topic", config.Topic),
+	)
 	return &consumerImpl{csm: mc, wg: wg}, nil
 
 }
