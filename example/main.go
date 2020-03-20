@@ -1,44 +1,46 @@
-package pulsar
+package main
 
 import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"time"
 
+	pulsar "github.com/TuyaInc/tuya_pulsar_sdk_go"
 	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tylog"
 	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tyutils"
 )
 
-func ExampleConsumer() {
+func main() {
 	// SetInternalLogLevel(logrus.DebugLevel)
 	tylog.SetGlobalLog("sdk", false)
 	accessID := "accessID"
 	accessKey := "accessKey"
-	topic := TopicForAccessID(accessID)
+	topic := pulsar.TopicForAccessID(accessID)
 
 	// create client
-	cfg := ClientConfig{
-		PulsarAddr: PulsarAddrCN,
+	cfg := pulsar.ClientConfig{
+		PulsarAddr: pulsar.PulsarAddrCN,
 	}
-	c := NewClient(cfg)
+	c := pulsar.NewClient(cfg)
 
 	// create consumer
-	csmCfg := ConsumerConfig{
+	csmCfg := pulsar.ConsumerConfig{
 		Topic: topic,
-		Auth:  NewAuthProvider(accessID, accessKey),
+		Auth:  pulsar.NewAuthProvider(accessID, accessKey),
 	}
 	csm, _ := c.NewConsumer(csmCfg)
 
 	// handle message
 	csm.ReceiveAndHandle(context.Background(), &helloHandler{AesSecret: accessKey[8:24]})
-	// Output:
 }
 
 type helloHandler struct {
 	AesSecret string
 }
 
-func (h *helloHandler) HandlePayload(ctx context.Context, msg *Message, payload []byte) error {
+func (h *helloHandler) HandlePayload(ctx context.Context, msg *pulsar.Message, payload []byte) error {
+	time.Sleep(5 * time.Second)
 	tylog.Info("payload preview", tylog.String("payload", string(payload)))
 
 	// let's decode the payload with AES
