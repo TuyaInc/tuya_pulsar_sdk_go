@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tylog"
@@ -31,6 +30,7 @@ type Client interface {
 
 type Consumer interface {
 	ReceiveAndHandle(ctx context.Context, handler PayloadHandler)
+	Stop()
 }
 
 type PayloadHandler interface {
@@ -91,7 +91,7 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 		NewConsumerTimeout: time.Minute,
 	}
 	p := c.GetPartition(config.Topic, cfg.ClientConfig)
-	wg := &sync.WaitGroup{}
+
 	// partitioned topic
 	if p > 0 {
 		list := make([]*consumerImpl, 0, p)
@@ -99,12 +99,18 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 		for i := 0; i < p; i++ {
 			cfg.Topic = fmt.Sprintf("%s-partition-%d", originTopic, i)
 			mc := manage.NewManagedConsumer(c.pool, cfg)
-			list = append(list, &consumerImpl{csm: mc, wg: wg})
+			list = append(list, &consumerImpl{
+				csm:     mc,
+				topic:   cfg.Topic,
+				stopped: make(chan struct{}),
+			})
 		}
 		consumerList := &ConsumerList{
 			list:             list,
 			FlowPeriodSecond: DefaultFlowPeriodSecond,
 			FlowPermit:       DefaultFlowPermit,
+			Topic:            config.Topic,
+			Stopped:          make(chan struct{}),
 		}
 		return consumerList, nil
 	}
@@ -115,7 +121,11 @@ func (c *client) NewConsumer(config ConsumerConfig) (Consumer, error) {
 		tylog.String("pulsar", c.Addr),
 		tylog.String("topic", config.Topic),
 	)
-	return &consumerImpl{csm: mc, wg: wg}, nil
+	return &consumerImpl{
+		csm:     mc,
+		topic:   cfg.Topic,
+		stopped: make(chan struct{}),
+	}, nil
 
 }
 
