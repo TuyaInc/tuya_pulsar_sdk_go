@@ -54,9 +54,11 @@ func (l *ConsumerList) CronFlow() {
 					}
 				}
 
-				err := c.Flow(l.FlowPermit)
-				if err != nil {
-					tylog.Error("flow failed", tylog.ErrorField(err), tylog.String("topic", c.Topic))
+				if !c.Unactive && len(c.Queue) == 0 {
+					err := c.Flow(l.FlowPermit)
+					if err != nil {
+						tylog.Error("flow failed", tylog.ErrorField(err), tylog.String("topic", c.Topic))
+					}
 				}
 			}
 		}
