@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"time"
 
 	pulsar "github.com/TuyaInc/tuya_pulsar_sdk_go"
 	"github.com/TuyaInc/tuya_pulsar_sdk_go/pkg/tylog"
@@ -40,7 +39,6 @@ type helloHandler struct {
 }
 
 func (h *helloHandler) HandlePayload(ctx context.Context, msg *pulsar.Message, payload []byte) error {
-	time.Sleep(5 * time.Second)
 	tylog.Info("payload preview", tylog.String("payload", string(payload)))
 
 	// let's decode the payload with AES
