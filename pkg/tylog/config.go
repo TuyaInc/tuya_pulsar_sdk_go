@@ -36,6 +36,8 @@ type LogConfig struct {
 	maxSize int
 	// 日志按时间分割，默认为一天
 	rotatePeriodSecond int64
+	// max num of rotated backups, zero means infinite
+	maxBackups int
 }
 
 type LevelEnum = zap.AtomicLevel
