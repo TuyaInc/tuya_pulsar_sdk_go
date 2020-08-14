@@ -32,6 +32,12 @@ func WithRotatePeriodSecondOption(v int64) OptionFunc {
 	})
 }
 
+func WithMaxBackupsOption(v int) OptionFunc {
+	return OptionFunc(func(log *LogConfig) {
+		log.maxBackups = v
+	})
+}
+
 func WithLevelOption(v LevelEnum) OptionFunc {
 	return OptionFunc(func(log *LogConfig) {
 		log.level = v

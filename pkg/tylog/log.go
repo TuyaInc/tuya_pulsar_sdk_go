@@ -46,6 +46,7 @@ func NewLog(config *LogConfig) *zap.Logger {
 	jLoger := &lumberjack.Logger{
 		Filename: filePath,
 		MaxSize:  config.maxSize,
+		MaxBackups: config.maxBackups,
 	}
 	jLoger.LocalTime = config.localTime
 
