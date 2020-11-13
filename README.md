@@ -1,5 +1,9 @@
 # pulsar-client-go
 
+## 仓库迁移
+
+该仓库停止更新，请迁移至`https://github.com/tuya/tuya-pulsar-sdk-go`
+
 ## 使用前准备
 
 1. AccessID 由涂鸦平台提供
